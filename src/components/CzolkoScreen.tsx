@@ -114,8 +114,17 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
 
           {/* Środek */}
           <div className="flex-1 flex flex-col items-center gap-4">
-            <div className={`text-6xl font-black tabular-nums ${timerColor}`}>
-              {timeLeft}
+            <div className="flex items-center gap-4">
+              <div className={`text-6xl font-black tabular-nums ${timerColor}`}>
+                {timeLeft}
+              </div>
+              <motion.button
+                onClick={onExit}
+                className="w-10 h-10 rounded-xl glass flex items-center justify-center"
+                whileTap={{ scale: 0.9 }}
+              >
+                <LogOut className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+              </motion.button>
             </div>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
