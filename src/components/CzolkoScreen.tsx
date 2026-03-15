@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, LogOut, Check, X, RotateCcw, Smartphone } from "lucide-react";
+import { Trophy, LogOut, Check, X, Smartphone } from "lucide-react";
 import type { Difficulty } from "@/data/questions";
 import { getCzolkoWords, shuffleArray } from "@/data/questions";
 import type { Player } from "@/hooks/usePlayers";
@@ -16,7 +16,6 @@ interface Props {
 }
 
 const ROUND_TIME = 60;
-
 type Phase = "ready" | "playing" | "result";
 
 export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd, onExit }: Props) {
@@ -33,6 +32,18 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
   const currentPlayer = players[pIndex % players.length];
   const currentWord = words[wordIndex % words.length];
   const isLastPlayer = pIndex >= players.length - 1;
+
+  // Blokuj/odblokuj orientację ekranu
+  useEffect(() => {
+    if (phase === "playing") {
+      (screen.orientation as any)?.lock?.("landscape").catch(() => {});
+    } else {
+      (screen.orientation as any)?.unlock?.();
+    }
+    return () => {
+      (screen.orientation as any)?.unlock?.();
+    };
+  }, [phase]);
 
   // Timer
   useEffect(() => {
@@ -76,14 +87,65 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
     setPhase("ready");
   }, [isLastPlayer, onEnd]);
 
-  const timerPercent = (timeLeft / ROUND_TIME) * 100;
   const timerColor = timeLeft <= 10 ? "text-destructive" : "text-never-have-i";
 
   const cardVariants = {
-    enter: (d: number) => ({ y: d * 200, opacity: 0, scale: 0.8 }),
-    center: { y: 0, opacity: 1, scale: 1 },
-    exit: (d: number) => ({ y: d * -200, opacity: 0, scale: 0.8 }),
+    enter: (d: number) => ({ x: d * 200, opacity: 0, scale: 0.8 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (d: number) => ({ x: d * -200, opacity: 0, scale: 0.8 }),
   };
+
+  // Widok poziomy podczas gry
+  if (phase === "playing") {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background"
+        style={{ transform: "rotate(90deg)", transformOrigin: "center center", width: "100vh", height: "100vw", top: "50%", left: "50%", marginTop: "-50vw", marginLeft: "-50vh" }}
+      >
+        <div className="w-full h-full flex flex-row items-center justify-between px-8 gap-6">
+          {/* Pomiń */}
+          <motion.button
+            onClick={handleSkip}
+            className="w-20 h-20 rounded-2xl bg-destructive/20 flex items-center justify-center flex-shrink-0"
+            whileTap={{ scale: 0.85 }}
+          >
+            <X className="w-10 h-10 text-destructive" strokeWidth={2} />
+          </motion.button>
+
+          {/* Środek */}
+          <div className="flex-1 flex flex-col items-center gap-4">
+            <div className={`text-6xl font-black tabular-nums ${timerColor}`}>
+              {timeLeft}
+            </div>
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={wordIndex}
+                custom={direction}
+                variants={cardVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="glass glow-coral rounded-3xl px-10 py-8 w-full text-center"
+              >
+                <p className="text-5xl font-black">{currentWord}</p>
+              </motion.div>
+            </AnimatePresence>
+            <p className="text-sm text-muted-foreground">{currentPlayer.name}</p>
+          </div>
+
+          {/* Poprawnie */}
+          <motion.button
+            onClick={handleCorrect}
+            className="w-20 h-20 rounded-2xl bg-never-have-i flex items-center justify-center flex-shrink-0"
+            whileTap={{ scale: 0.85 }}
+          >
+            <Check className="w-10 h-10 text-primary-foreground" strokeWidth={2.5} />
+          </motion.button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -137,55 +199,6 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
             </motion.div>
           )}
 
-          {phase === "playing" && (
-            <motion.div
-              key="playing"
-              className="w-full flex flex-col items-center gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Timer circle */}
-              <div className={`text-5xl font-black tabular-nums ${timerColor}`}>
-                {timeLeft}
-              </div>
-
-              {/* Word card */}
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={wordIndex}
-                  custom={direction}
-                  variants={cardVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="glass glow-coral rounded-3xl p-10 w-full max-w-md text-center"
-                >
-                  <p className="text-3xl font-bold">{currentWord}</p>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Correct / Skip buttons */}
-              <div className="flex items-center gap-8">
-                <motion.button
-                  onClick={handleSkip}
-                  className="w-20 h-20 rounded-2xl glass flex items-center justify-center"
-                  whileTap={{ scale: 0.85, rotate: -10 }}
-                >
-                  <X className="w-9 h-9 text-destructive" strokeWidth={2} />
-                </motion.button>
-                <motion.button
-                  onClick={handleCorrect}
-                  className="w-24 h-24 rounded-2xl bg-never-have-i flex items-center justify-center"
-                  whileTap={{ scale: 0.85 }}
-                >
-                  <Check className="w-11 h-11 text-primary-foreground" strokeWidth={2.5} />
-                </motion.button>
-              </div>
-            </motion.div>
-          )}
-
           {phase === "result" && (
             <motion.div
               key="result"
@@ -206,11 +219,7 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
                 className="bg-never-have-i text-primary-foreground font-bold px-8 py-4 rounded-2xl text-lg mt-4"
                 whileTap={{ scale: 0.95 }}
               >
-                {isLastPlayer ? (
-                  <>Podsumowanie 🏆</>
-                ) : (
-                  <>Następny gracz</>
-                )}
+                {isLastPlayer ? <>Podsumowanie 🏆</> : <>Następny gracz</>}
               </motion.button>
             </motion.div>
           )}
