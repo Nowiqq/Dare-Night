@@ -99,10 +99,22 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
   if (phase === "playing") {
     return (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-background"
+        className="fixed inset-0 z-50 flex flex-col bg-background"
         style={{ transform: "rotate(90deg)", transformOrigin: "center center", width: "100vh", height: "100vw", top: "50%", left: "50%", marginTop: "-50vw", marginLeft: "-50vh" }}
       >
-        <div className="w-full h-full flex flex-row items-center justify-between px-8 gap-6">
+        {/* Przycisk wyjścia - góra */}
+        <div className="flex justify-end px-4 pt-4">
+          <motion.button
+            onClick={onExit}
+            className="w-10 h-10 rounded-xl glass flex items-center justify-center"
+            whileTap={{ scale: 0.9 }}
+          >
+            <LogOut className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+          </motion.button>
+        </div>
+
+        {/* Główna zawartość */}
+        <div className="flex-1 flex flex-row items-center justify-between px-8 gap-6">
           {/* Pomiń */}
           <motion.button
             onClick={handleSkip}
@@ -114,17 +126,8 @@ export default function CzolkoScreen({ difficulty, players, onUpdateScore, onEnd
 
           {/* Środek */}
           <div className="flex-1 flex flex-col items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className={`text-6xl font-black tabular-nums ${timerColor}`}>
-                {timeLeft}
-              </div>
-              <motion.button
-                onClick={onExit}
-                className="w-10 h-10 rounded-xl glass flex items-center justify-center"
-                whileTap={{ scale: 0.9 }}
-              >
-                <LogOut className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
-              </motion.button>
+            <div className={`text-6xl font-black tabular-nums ${timerColor}`}>
+              {timeLeft}
             </div>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
