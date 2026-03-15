@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0A0A1F;
+    --foreground: #E0E0FF;
+
+    --card: #1F1F3F;
+    --card-foreground: #E0E0FF;
+
+    --popover: #1F1F3F;
+    --popover-foreground: #E0E0FF;
+
+    --primary: #FF3366;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #1F1F3F;
+    --secondary-foreground: #E0E0FF;
+
+    --muted: #1F1F3F;
+    --muted-foreground: #A0A0C0;
+
+    --accent: #FF3366;
+    --accent-foreground: #FFFFFF;
+
+    --destructive: #FF3366;
+    --destructive-foreground: #FFFFFF;
+
+    --border: rgba(224, 224, 255, 0.1);
+    --input: rgba(224, 224, 255, 0.1);
+    --ring: #FF3366;
+
+    --radius: 1rem;
+
+    /* Game accent colors */
+    --truth-dare: #FF3366;
+    --truth-dare-glow: #FF0044;
+    --never-have-i: #FFCC00;
+    --never-have-i-glow: #FFBF00;
+    --drink-if: #00CCFF;
+    --drink-if-glow: #00BFFF;
+
+    /* Text colors */
+    --text-primary: #E0E0FF;
+    --text-secondary: #A0A0C0;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(31, 31, 63, 0.4);
+    --glass-border: rgba(224, 224, 255, 0.1);
+    --glass-blur: 20px;
+
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  body {
+    @apply antialiased;
+    background: var(--background);
+    color: var(--foreground);
+    overflow: hidden;
+    height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-size: 280px;
+    background-repeat: repeat;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 31, 0.7);
+    pointer-events: none;
+    z-index: 0;
+  }
+  #root {
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Game card styles with neon effects */
+  .game-card-truth-dare {
+    border: 2px solid var(--truth-dare);
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.4), 0 0 40px rgba(255, 0, 68, 0.2);
+    transition: all 0.3s ease;
+  }
+  .game-card-truth-dare:hover {
+    box-shadow: 0 0 30px rgba(255, 51, 102, 0.6), 0 0 60px rgba(255, 0, 68, 0.3);
+    transform: scale(0.98);
+  }
+
+  .game-card-never-have-i {
+    border: 2px solid var(--never-have-i);
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.4), 0 0 40px rgba(255, 191, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+  .game-card-never-have-i:hover {
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.6), 0 0 60px rgba(255, 191, 0, 0.3);
+    transform: scale(0.98);
+  }
+
+  .game-card-drink-if {
+    border: 2px solid var(--drink-if);
+    box-shadow: 0 0 20px rgba(0, 204, 255, 0.4), 0 0 40px rgba(0, 191, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  .game-card-drink-if:hover {
+    box-shadow: 0 0 30px rgba(0, 204, 255, 0.6), 0 0 60px rgba(0, 191, 255, 0.3);
+    transform: scale(0.98);
+  }
+
+  /* Icon glow effects */
+  .icon-glow-truth-dare {
+    filter: drop-shadow(0 0 8px rgba(255, 51, 102, 0.8)) drop-shadow(0 0 16px rgba(255, 0, 68, 0.4));
+  }
+
+  .icon-glow-never-have-i {
+    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.8)) drop-shadow(0 0 16px rgba(255, 191, 0, 0.4));
+  }
+
+  .icon-glow-drink-if {
+    filter: drop-shadow(0 0 8px rgba(0, 204, 255, 0.8)) drop-shadow(0 0 16px rgba(0, 191, 255, 0.4));
+  }
+
+  /* Neon text effects */
+  .neon-text-truth-dare {
+    background: linear-gradient(135deg, var(--truth-dare) 0%, #FF5588 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 12px rgba(255, 51, 102, 0.6)) drop-shadow(0 0 24px rgba(255, 0, 68, 0.3));
+  }
+
+  .neon-text-never-have-i {
+    background: linear-gradient(135deg, var(--never-have-i) 0%, #FFD633 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 12px rgba(255, 204, 0, 0.6)) drop-shadow(0 0 24px rgba(255, 191, 0, 0.3));
+  }
+
+  .neon-text-drink-if {
+    background: linear-gradient(135deg, var(--drink-if) 0%, #33D6FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 12px rgba(0, 204, 255, 0.6)) drop-shadow(0 0 24px rgba(0, 191, 255, 0.3));
+  }
+
+  /* Header gradient */
+  .header-gradient {
+    background: linear-gradient(135deg, #E0E0FF 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 30px rgba(255, 51, 102, 0.3), 0 0 60px rgba(255, 0, 68, 0.1);
+  }
+  .glow-coral {
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.3), 0 0 60px rgba(255, 191, 0, 0.1);
+  }
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(0, 204, 255, 0.3), 0 0 60px rgba(0, 191, 255, 0.1);
+  }
+
+  .neon-text-purple {
+    text-shadow: 0 0 20px rgba(255, 51, 102, 0.6), 0 0 40px rgba(255, 0, 68, 0.3);
+  }
+  .neon-text-coral {
+    text-shadow: 0 0 20px rgba(255, 204, 0, 0.6), 0 0 40px rgba(255, 191, 0, 0.3);
+  }
+  .neon-text-cyan {
+    text-shadow: 0 0 20px rgba(0, 204, 255, 0.6), 0 0 40px rgba(0, 191, 255, 0.3);
+  }
+
+  .player-pill {
+    @apply px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    isolation: isolate;
+    backface-visibility: hidden;
+  }
+
+  .difficulty-pill {
+    border-radius: 16px;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    isolation: isolate;
+    -webkit-font-smoothing: antialiased;
+    transition: box-shadow 0.2s ease-out, background 0.2s ease-out, color 0.2s ease-out, transform 0.12s ease-out;
+  }
+
+  .game-card-truth-dare,
+  .game-card-never-have-i,
+  .game-card-drink-if {
+    isolation: isolate;
+    backface-visibility: hidden;
+  }
+
+  button {
+    isolation: isolate;
+    backface-visibility: hidden;
+    overflow: visible;
+  }
+}
